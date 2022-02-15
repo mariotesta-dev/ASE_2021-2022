@@ -5,4 +5,4 @@ This repository contains my personal solutions for exam-like ARM exercises of th
 Every folder contains the PDF of the exercise and a Keil uVision 5.0 project which needs a LPC1768 board or the equivalent simulator to run.
 
 ### Disclaimer:
-The solutions proposed works, but haven't been deeply tested. <br/>They don't replace teaching material and are just for demonstration purpose.
+The solutions proposed work, but haven't been deeply tested. <br/>They don't replace teaching material and are just for demonstration purpose.
