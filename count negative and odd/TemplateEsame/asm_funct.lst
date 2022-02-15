@@ -1,0 +1,125 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000         
+    2 00000000                 AREA             asm_functions, CODE, READONLY
+    3 00000000                 EXPORT           count_negative_and_odd
+    4 00000000         
+    5 00000000         count_negative_and_odd
+    6 00000000 46EC            MOV              R12, sp
+    7 00000002 E92D 4DF0       STMFD            sp!, {r4-r8, r10-r11, lr}
+    8 00000006         
+    9 00000006         ;ro = VETT
+   10 00000006         ;r1 = N
+   11 00000006         ;bisogna contare i valori negativi e dispari
+   12 00000006         
+   13 00000006 F04F 0204       mov              r2, #4
+   14 0000000A FB01 F102       mul              r1,r1,r2    ;16bits integers, s
+                                                            o i have to move us
+                                                            ing 2bytes
+   15 0000000E EB00 0201       add              r2, r0, r1  ;find VETT ending a
+                                                            ddress
+   16 00000012 F04F 0500       mov              r5, #0      ;count
+   17 00000016         loop
+   18 00000016 F9B0 4000       ldrsh            r4, [r0]    ;get current value 
+                                                            from vett, i'm usin
+                                                            g a signed half sin
+                                                            ce, but an implemen
+                                                            tation using a 32bi
+                                                            t + using AND with 
+                                                            0xf0000000 is possi
+                                                            ble to declare if a
+                                                             number is negative
+                                                             since a value THAT
+                                                             big is unrealistic
+                                                             for this use case
+   19 0000001A 2C00            cmp              r4, #0
+   20 0000001C DC05            bgt              next_element
+   21 0000001E BFB8 F004 
+              0401             andlt            r4, r4, #0x00000001 ;if r4 is l
+                                                            ower than 0, so it'
+                                                            s negative -> check
+                                                             if it's odd by doi
+                                                            ng AND with 0x01
+   22 00000024 2C01            cmp              r4,#1
+   23 00000026 BF08 1C6D       addeq            r5,r5,#1    ;if the AND returns
+                                                             1 -> then add 1 to
+                                                             counter r5
+   24 0000002A         
+   25 0000002A         next_element
+   26 0000002A F100 0004       add              r0,r0,#4    ;int should be save
+                                                            d as 16bits value, 
+                                                            so i add 2 bytes to
+                                                             visit the next ele
+                                                            ment
+   27 0000002E 4290            cmp              r0,r2
+   28 00000030 D1F1            bne              loop        ;if current element
+                                                             address is lower, 
+                                                            so different, than 
+                                                            the ending address 
+                                                            -> loop
+   29 00000032         
+   30 00000032         ;setup value for R0 to return r5 which is the counter of
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+                        number which are negative and odd at the same time
+   31 00000032 4628            MOV              R0, R5
+   32 00000034         
+   33 00000034         ;restore volatile registers
+   34 00000034 E8BD 8DF0       LDMFD            sp!, {r4-r8, r10-r11, pc}
+   35 00000038         
+   36 00000038                 END                          ;
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
+ork --depend=.\asm_funct.d -o.\asm_funct.o -I.\RTE\_Target_1 -IC:\Users\mario\A
+ppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include -IC:\Users\mario\AppD
+ata\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include --predefine="__EVAL S
+ETA 1" --predefine="__UVISION_VERSION SETA 536" --predefine="_RTE_ SETA 1" --pr
+edefine="LPC175x_6x SETA 1" --predefine="_RTE_ SETA 1" --list=.\asm_funct.lst R
+IT\ASM_funct.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+asm_functions 00000000
+
+Symbol: asm_functions
+   Definitions
+      At line 2 in file RIT\ASM_funct.s
+   Uses
+      None
+Comment: asm_functions unused
+count_negative_and_odd 00000000
+
+Symbol: count_negative_and_odd
+   Definitions
+      At line 5 in file RIT\ASM_funct.s
+   Uses
+      At line 3 in file RIT\ASM_funct.s
+Comment: count_negative_and_odd used once
+loop 00000016
+
+Symbol: loop
+   Definitions
+      At line 17 in file RIT\ASM_funct.s
+   Uses
+      At line 28 in file RIT\ASM_funct.s
+Comment: loop used once
+next_element 0000002A
+
+Symbol: next_element
+   Definitions
+      At line 25 in file RIT\ASM_funct.s
+   Uses
+      At line 20 in file RIT\ASM_funct.s
+Comment: next_element used once
+4 symbols
+338 symbols in table

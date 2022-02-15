@@ -1,0 +1,227 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000                 AREA             ram_pool, DATA, READWRITE
+    2 00000000                 EXPORT           BEST_3
+    3 00000000 00 00 00 
+                       BEST_3  SPACE            3
+    4 00000003                 LTORG
+    5 00000003         
+    6 00000003                 AREA             rom_pool, DATA, READONLY
+    7 00000000                 EXPORT           DATA_IN
+    8 00000000                 EXPORT           N
+    9 00000000 F6 14 1E 
+              28 32    DATA_IN DCB              -10, 20, 30, 40, 50
+   10 00000005 05      N       DCB              5
+   11 00000006                 LTORG
+   12 00000006         
+   13 00000006                 AREA             asm_functions, CODE, READONLY
+   14 00000000                 EXPORT           find_best_3
+   15 00000000         
+   16 00000000         find_best_3
+   17 00000000 46EC            MOV              R12, sp
+   18 00000002 E92D 4DF0       STMFD            sp!, {r4-r8, r10-r11, lr}
+   19 00000006         
+   20 00000006         ;ro = DATA_IN
+   21 00000006         ;r1 = N
+   22 00000006         ;r2 = BEST_3
+   23 00000006         ;strategy: insert first 3 elements, then for each elemen
+                       t starting from data_in|3| -> find the lowest and swap i
+                       t
+   24 00000006         
+   25 00000006         ;insert first 3 elements
+   26 00000006 F990 3000       ldrsb            r3, [r0]
+   27 0000000A 7013            strb             r3, [r2]
+   28 0000000C F990 3001       ldrsb            r3, [r0,#1]
+   29 00000010 7053            strb             r3, [r2,#1]
+   30 00000012 F990 3002       ldrsb            r3, [r0,#2]
+   31 00000016 7093            strb             r3, [r2,#2]
+   32 00000018         
+   33 00000018 EB00 0301       add              r3, r0, r1  ;ending of data_in
+   34 0000001C F100 0003       add              r0,r0, #3   ;starting of data_i
+                                                            n from 4th element 
+                                                            if exist
+   35 00000020 F102 0803       add              r8,r2, #3
+   36 00000024         loop
+   37 00000024 4298            cmp              r0,r3
+   38 00000026 DA1C            bge              fine        ;if starting pointe
+                                                            r reached end or it
+                                                            's over the ending 
+                                                            pointer, then end t
+                                                            he function
+   39 00000028         
+   40 00000028         ;else
+   41 00000028 F990 4000       ldrsb            r4, [r0]    ;get element from d
+                                                            ata_in
+   42 0000002C F04F 0600       mov              r6, #0      ;index
+   43 00000030 F04F 37FF       mov              r7, #-1     ;flag, if this flag
+                                                             is != -1 --> there
+                                                             is an minimum elem
+                                                            ent inside best_3, 
+                                                            so swap it
+   44 00000034         loop_int
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+   45 00000034 F992 5000       ldrsb            r5, [r2]    ;get element from b
+                                                            est_3
+   46 00000038 42AC            cmp              r4,r5
+   47 0000003A BFC4 462C       movgt            r4,r5       ;if r4 > r5, save t
+                                                            he minimum value be
+                                                            tween the two
+   48 0000003E 4637            movgt            r7, r6      ;flag != -1 --> min
+                                                            imum value found, s
+                                                            et r7 with the inde
+                                                            x of the minimum va
+                                                            lue
+   49 00000040 F106 0601       add              r6,r6,#1    ;increment index
+   50 00000044 F102 0201       add              r2,r2,#1    ;increment pointer 
+                                                            address of best_3
+   51 00000048 4542            cmp              r2,r8
+   52 0000004A D1F3            bne              loop_int    ;if end has not bee
+                                                            n reached, keep loo
+                                                            ping in internal lo
+                                                            op
+   53 0000004C         
+   54 0000004C F1B7 3FFF       cmp              r7, #-1
+   55 00000050 BF1E F990 
+              4000             ldrsbne          r4, [r0]    ;get data_in value 
+                                                            again
+   56 00000056 4A04            ldrne            r2, =BEST_3 ;get best_3 address
+                                                             agaian
+   57 00000058 55D4            strbne           r4, [r2,r7] ;store data_value a
+                                                            t index of minimum 
+                                                            value, if it has be
+                                                            en found -> r7 != -
+                                                            1
+   58 0000005A         
+   59 0000005A F100 0001       add              r0,r0,#1    ;increment data_in 
+                                                            pointer
+   60 0000005E 4298            cmp              r0,r3
+   61 00000060 D1E0            bne              loop
+   62 00000062         
+   63 00000062         ;setup value for R0 to return
+   64 00000062         fine
+   65 00000062 4608            MOV              R0, R1
+   66 00000064         
+   67 00000064         ;restore volatile registers
+   68 00000064 E8BD 8DF0       LDMFD            sp!, {r4-r8, r10-r11, pc}
+   69 00000068         
+   70 00000068                 END                          ;
+              00000000 
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
+ork --depend=.\asm_funct.d -o.\asm_funct.o -I.\RTE\_Target_1 -IC:\Users\mario\A
+ppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include -IC:\Users\mario\AppD
+ata\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include --predefine="__EVAL S
+ETA 1" --predefine="__UVISION_VERSION SETA 536" --predefine="_RTE_ SETA 1" --pr
+edefine="LPC175x_6x SETA 1" --predefine="_RTE_ SETA 1" --list=.\asm_funct.lst R
+IT\ASM_funct.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+BEST_3 00000000
+
+Symbol: BEST_3
+   Definitions
+      At line 3 in file RIT\ASM_funct.s
+   Uses
+      At line 2 in file RIT\ASM_funct.s
+      At line 56 in file RIT\ASM_funct.s
+
+ram_pool 00000000
+
+Symbol: ram_pool
+   Definitions
+      At line 1 in file RIT\ASM_funct.s
+   Uses
+      None
+Comment: ram_pool unused
+2 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+DATA_IN 00000000
+
+Symbol: DATA_IN
+   Definitions
+      At line 9 in file RIT\ASM_funct.s
+   Uses
+      At line 7 in file RIT\ASM_funct.s
+Comment: DATA_IN used once
+N 00000005
+
+Symbol: N
+   Definitions
+      At line 10 in file RIT\ASM_funct.s
+   Uses
+      At line 8 in file RIT\ASM_funct.s
+Comment: N used once
+rom_pool 00000000
+
+Symbol: rom_pool
+   Definitions
+      At line 6 in file RIT\ASM_funct.s
+   Uses
+      None
+Comment: rom_pool unused
+3 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+asm_functions 00000000
+
+Symbol: asm_functions
+   Definitions
+      At line 13 in file RIT\ASM_funct.s
+   Uses
+      None
+Comment: asm_functions unused
+find_best_3 00000000
+
+Symbol: find_best_3
+   Definitions
+      At line 16 in file RIT\ASM_funct.s
+   Uses
+      At line 14 in file RIT\ASM_funct.s
+Comment: find_best_3 used once
+fine 00000062
+
+Symbol: fine
+   Definitions
+      At line 64 in file RIT\ASM_funct.s
+   Uses
+      At line 38 in file RIT\ASM_funct.s
+Comment: fine used once
+loop 00000024
+
+Symbol: loop
+   Definitions
+      At line 36 in file RIT\ASM_funct.s
+   Uses
+      At line 61 in file RIT\ASM_funct.s
+Comment: loop used once
+loop_int 00000034
+
+Symbol: loop_int
+   Definitions
+      At line 44 in file RIT\ASM_funct.s
+   Uses
+      At line 52 in file RIT\ASM_funct.s
+Comment: loop_int used once
+5 symbols
+346 symbols in table

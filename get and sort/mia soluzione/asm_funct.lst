@@ -1,0 +1,106 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000         
+    2 00000000                 AREA             asm_functions, CODE, READONLY
+    3 00000000                 EXPORT           get_and_sort
+    4 00000000         
+    5 00000000         get_and_sort
+    6 00000000 46EC            MOV              R12, sp
+    7 00000002 E92D 4DF0       STMFD            sp!, {r4-r8, r10-r11, lr}
+    8 00000006         
+    9 00000006         ;ro = VETT
+   10 00000006         ;r1 = VAL
+   11 00000006         ;r2 = i
+   12 00000006         
+   13 00000006 2A00            CMP              r2, #0      ;se è il primo valo
+                                                            re che sto inserend
+                                                            o
+   14 00000008 BF08 7001       STRBEQ           r1, [r0]    ;inseriscilo in pri
+                                                            ma posizione su vet
+                                                            t
+   15 0000000C D00F            BEQ              fine
+   16 0000000E         ;else           ---> almeno i>0, quindi ho almeno 2 elem
+                       enti in vett
+   17 0000000E         loop
+   18 0000000E EB00 0302       ADD              r3,r0,r2    ;posizione dove ins
+                                                            erire val
+   19 00000012 F103 34FF       ADD              r4,r3,#-1   ;posizione elemento
+                                                             precedente
+   20 00000016 7825            LDRB             r5, [r4]    ;prendo elemento pr
+                                                            ecedente
+   21 00000018 42A9            CMP              r1, r5
+   22 0000001A BF3C 701D       STRBLO           r5, [r3]    ;se val è minore, s
+                                                            alva r5 nella posiz
+                                                            ione indicata dall'
+                                                            indice
+   23 0000001E 7021            STRBLO           r1, [r4]
+   24 00000020 BF88 7019       STRBHI           r1, [r3]    ;se val è maggiore,
+                                                             salva val nella po
+                                                            sizione indicata da
+                                                            ll'indice
+   25 00000024 D803            BHI              fine
+   26 00000026         
+   27 00000026 F102 32FF       ADD              r2,r2, #-1  ;decremento indice
+   28 0000002A 2A00            CMP              R2, #0
+   29 0000002C D1EF            BNE              loop        ;loop se i != 0
+   30 0000002E         
+   31 0000002E         fine
+   32 0000002E         ;setup value for R0 to return VAL
+   33 0000002E 4608            MOV              R0, R1
+   34 00000030         
+   35 00000030         ;restore volatile registers
+   36 00000030 E8BD 8DF0       LDMFD            sp!, {r4-r8, r10-r11, pc}
+   37 00000034         
+   38 00000034                 END                          ;
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
+ork --depend=.\asm_funct.d -o.\asm_funct.o -I.\RTE\_Target_1 -IC:\Users\mario\A
+ppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include -IC:\Users\mario\AppD
+ata\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include --predefine="__EVAL S
+ETA 1" --predefine="__UVISION_VERSION SETA 536" --predefine="_RTE_ SETA 1" --pr
+edefine="LPC175x_6x SETA 1" --predefine="_RTE_ SETA 1" --list=.\asm_funct.lst R
+IT\ASM_funct.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+asm_functions 00000000
+
+Symbol: asm_functions
+   Definitions
+      At line 2 in file RIT\ASM_funct.s
+   Uses
+      None
+Comment: asm_functions unused
+fine 0000002E
+
+Symbol: fine
+   Definitions
+      At line 31 in file RIT\ASM_funct.s
+   Uses
+      At line 15 in file RIT\ASM_funct.s
+      At line 25 in file RIT\ASM_funct.s
+
+get_and_sort 00000000
+
+Symbol: get_and_sort
+   Definitions
+      At line 5 in file RIT\ASM_funct.s
+   Uses
+      At line 3 in file RIT\ASM_funct.s
+Comment: get_and_sort used once
+loop 0000000E
+
+Symbol: loop
+   Definitions
+      At line 17 in file RIT\ASM_funct.s
+   Uses
+      At line 29 in file RIT\ASM_funct.s
+Comment: loop used once
+4 symbols
+338 symbols in table

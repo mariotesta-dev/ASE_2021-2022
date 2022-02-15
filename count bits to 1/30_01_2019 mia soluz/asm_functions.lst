@@ -1,0 +1,78 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000         
+    2 00000000                 AREA             asm_functions, CODE, READONLY
+    3 00000000                 EXPORT           count_bits_to_1
+    4 00000000         
+    5 00000000         count_bits_to_1
+    6 00000000 46EC            MOV              R12, sp
+    7 00000002 E92D 4DF0       STMFD            sp!, {r4-r8, r10-r11, lr}
+    8 00000006         
+    9 00000006         ;ro = VAR1
+   10 00000006         
+   11 00000006 F04F 0420       MOV              R4, #32     ;loop count
+   12 0000000A F04F 0500       MOV              R5, #0      ;0 value
+   13 0000000E F04F 0600       MOV              R6, #0      ;counter of bits se
+                                                            t to 1 = 0
+   14 00000012 F04F 0801       MOV              R8, #0x00000001
+   15 00000016         loop
+   16 00000016 EA00 0908       AND              R9, R0, R8
+   17 0000001A 45C1            CMP              R9,R8
+   18 0000001C BF08 1C76       ADDEQ            R6, R6, #1
+   19 00000020         
+   20 00000020 EA4F 0050       MOV              R0, R0, LSR #1
+   21 00000024         
+   22 00000024 F104 34FF       ADD              R4, R4, #-1
+   23 00000028 4284            CMP              R4, R0
+   24 0000002A D1F4            BNE              loop
+   25 0000002C         
+   26 0000002C         ;setup value for R0 to return
+   27 0000002C 4630            MOV              R0, R6
+   28 0000002E         
+   29 0000002E         ;restore volatile registers
+   30 0000002E E8BD 8DF0       LDMFD            sp!, {r4-r8, r10-r11, pc}
+   31 00000032         
+   32 00000032                 END                          ;
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
+ork --depend=.\asm_functions.d -o.\asm_functions.o -I.\RTE\_Target_1 -IC:\Users
+\mario\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include -IC:\Users\ma
+rio\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include --predefine="
+__EVAL SETA 1" --predefine="__UVISION_VERSION SETA 536" --predefine="_RTE_ SETA
+ 1" --predefine="LPC175x_6x SETA 1" --predefine="_RTE_ SETA 1" --list=.\asm_fun
+ctions.lst ASM_functions.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+asm_functions 00000000
+
+Symbol: asm_functions
+   Definitions
+      At line 2 in file ASM_functions.s
+   Uses
+      None
+Comment: asm_functions unused
+count_bits_to_1 00000000
+
+Symbol: count_bits_to_1
+   Definitions
+      At line 5 in file ASM_functions.s
+   Uses
+      At line 3 in file ASM_functions.s
+Comment: count_bits_to_1 used once
+loop 00000016
+
+Symbol: loop
+   Definitions
+      At line 15 in file ASM_functions.s
+   Uses
+      At line 24 in file ASM_functions.s
+Comment: loop used once
+3 symbols
+337 symbols in table

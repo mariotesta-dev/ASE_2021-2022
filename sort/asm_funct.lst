@@ -1,0 +1,100 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000         
+    2 00000000                 AREA             asm_functions, CODE, READONLY
+    3 00000000                 EXPORT           sort_vector
+    4 00000000         
+    5 00000000         sort_vector
+    6 00000000 46EC            MOV              R12, sp
+    7 00000002 E92D 4DF0       STMFD            sp!, {r4-r8, r10-r11, lr}
+    8 00000006         
+    9 00000006         ;ro = VETT
+   10 00000006         ;r1 = N
+   11 00000006         
+   12 00000006 EA4F 0181       mov              r1, r1, LSL #2 ;r1*4
+   13 0000000A EB00 0201       add              r2, r0, r1  ;indirizzo fine vet
+                                                            t
+   14 0000000E F100 0300       add              r3, r0, #0  ;j
+   15 00000012 F100 0400       add              r4, r0, #0  ;i
+   16 00000016 F2A2 0704       add              r7, r2, #-4
+   17 0000001A         loop_ext
+   18 0000001A F100 0300       add              r3, r0, #0
+   19 0000001E         loop_int
+   20 0000001E 681D            ldr              r5, [r3]    ;load vett|j|
+   21 00000020 685E            ldr              r6, [r3,#4] ;load vett|j+1|
+   22 00000022 42B5            cmp              r5, r6
+   23 00000024         ;se vett|j| > vett|j+1| --> può diventare desc mettendo 
+                       lt al posto di gt
+   24 00000024 BFC4 605D       strgt            r5, [r3,#4] ;salva vett|j| nell
+                                                            a posizione success
+                                                            iva
+   25 00000028 601E            strgt            r6, [r3]    ;salva vett|j+1| ne
+                                                            lla posizione prece
+                                                            dente
+   26 0000002A         
+   27 0000002A F103 0304       add              r3,r3, #4
+   28 0000002E 42BB            cmp              r3, r7
+   29 00000030 D1F5            bne              loop_int
+   30 00000032         
+   31 00000032 F104 0404       add              r4,r4,#4
+   32 00000036 4294            cmp              r4, r2
+   33 00000038 D1EF            bne              loop_ext
+   34 0000003A         
+   35 0000003A         ;setup value for R0 to return
+   36 0000003A 4630            MOV              R0, R6
+   37 0000003C         
+   38 0000003C         ;restore volatile registers
+   39 0000003C E8BD 8DF0       LDMFD            sp!, {r4-r8, r10-r11, pc}
+   40 00000040         
+   41 00000040                 END                          ;
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
+ork --depend=.\asm_funct.d -o.\asm_funct.o -I.\RTE\_Target_1 -IC:\Users\mario\A
+ppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include -IC:\Users\mario\AppD
+ata\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include --predefine="__EVAL S
+ETA 1" --predefine="__UVISION_VERSION SETA 536" --predefine="_RTE_ SETA 1" --pr
+edefine="LPC175x_6x SETA 1" --predefine="_RTE_ SETA 1" --list=.\asm_funct.lst R
+IT\ASM_funct.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+asm_functions 00000000
+
+Symbol: asm_functions
+   Definitions
+      At line 2 in file RIT\ASM_funct.s
+   Uses
+      None
+Comment: asm_functions unused
+loop_ext 0000001A
+
+Symbol: loop_ext
+   Definitions
+      At line 17 in file RIT\ASM_funct.s
+   Uses
+      At line 33 in file RIT\ASM_funct.s
+Comment: loop_ext used once
+loop_int 0000001E
+
+Symbol: loop_int
+   Definitions
+      At line 19 in file RIT\ASM_funct.s
+   Uses
+      At line 29 in file RIT\ASM_funct.s
+Comment: loop_int used once
+sort_vector 00000000
+
+Symbol: sort_vector
+   Definitions
+      At line 5 in file RIT\ASM_funct.s
+   Uses
+      At line 3 in file RIT\ASM_funct.s
+Comment: sort_vector used once
+4 symbols
+338 symbols in table

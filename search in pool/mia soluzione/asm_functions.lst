@@ -1,0 +1,133 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000         
+    2 00000000                 AREA             asm_functions, CODE, READONLY
+    3 00000000                 EXPORT           search_in_pool
+    4 00000000         
+    5 00000000 008260F3 
+              006370A3 
+              00942053 
+              00727043 
+              00921013 array   DCD              0x008260F3, 0x006370A3, 0x00942
+053, 0x00727043, 0x00921013
+    6 00000014 00000005 
+                       N       DCD              5
+    7 00000018         
+    8 00000018         search_in_pool
+    9 00000018 46EC            MOV              R12, sp
+   10 0000001A E92D 4DF0       STMFD            sp!, {r4-r8, r10-r11, lr} 
+                                                            ;ro = VAR
+   11 0000001E         
+   12 0000001E 4C0C            LDR              R4, =N      ;load N = 10
+   13 00000020 6824            LDR              R4, [R4]
+   14 00000022 4E0C            LDR              R6, =array  ;load literal pool 
+                                                            of 10 elements
+   15 00000024 F04F 0500       MOV              R5, #0      ;0 value
+   16 00000028 F04F 0800       MOV              R8, #0      ;array index
+   17 0000002C         
+   18 0000002C         loop
+   19 0000002C 6837            LDR              R7, [R6]    ;get value from arr
+                                                            ay
+   20 0000002E 4287            CMP              R7, R0      ;cmp with VAR
+   21 00000030 BF08 4640       MOVEQ            R0, R8      ;if they're equale 
+                                                            -> var has been fou
+                                                            nd, setup value for
+                                                             R0 to return the i
+                                                            ndex
+   22 00000034 D009            BEQ              fine        ;end the program
+   23 00000036         ;else
+   24 00000036 F108 0801       ADD              R8,R8,#1    ;increment index
+   25 0000003A F106 0604       ADD              R6, R6, #4  ;increment pointer 
+                                                            to next element of 
+                                                            the array
+   26 0000003E F104 34FF       ADD              R4, R4, #-1 ;decrease loop coun
+                                                            ter
+   27 00000042 4284            CMP              R4, R0      ;if !=0 keep loopin
+                                                            g, else loop ended
+   28 00000044 D1F2            BNE              loop
+   29 00000046         
+   30 00000046 F04F 30FF       MOV              R0, #-1     ;loop ended -> var 
+                                                            hasn't been found, 
+                                                            setup value for R0 
+                                                            to return -1
+   31 0000004A         fine
+   32 0000004A         
+   33 0000004A         ;restore volatile registers
+   34 0000004A E8BD 8DF0       LDMFD            sp!, {r4-r8, r10-r11, pc}
+   35 0000004E         
+   36 0000004E                 END                          ;
+              00 00 00000000 
+              00000000 
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+ork --depend=.\asm_functions.d -o.\asm_functions.o -I.\RTE\_Target_1 -IC:\Users
+\mario\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include -IC:\Users\ma
+rio\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include --predefine="
+__EVAL SETA 1" --predefine="__UVISION_VERSION SETA 536" --predefine="_RTE_ SETA
+ 1" --predefine="LPC175x_6x SETA 1" --predefine="_RTE_ SETA 1" --list=.\asm_fun
+ctions.lst ASM_functions.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+N 00000014
+
+Symbol: N
+   Definitions
+      At line 6 in file ASM_functions.s
+   Uses
+      At line 12 in file ASM_functions.s
+Comment: N used once
+array 00000000
+
+Symbol: array
+   Definitions
+      At line 5 in file ASM_functions.s
+   Uses
+      At line 14 in file ASM_functions.s
+Comment: array used once
+asm_functions 00000000
+
+Symbol: asm_functions
+   Definitions
+      At line 2 in file ASM_functions.s
+   Uses
+      None
+Comment: asm_functions unused
+fine 0000004A
+
+Symbol: fine
+   Definitions
+      At line 31 in file ASM_functions.s
+   Uses
+      At line 22 in file ASM_functions.s
+Comment: fine used once
+loop 0000002C
+
+Symbol: loop
+   Definitions
+      At line 18 in file ASM_functions.s
+   Uses
+      At line 28 in file ASM_functions.s
+Comment: loop used once
+search_in_pool 00000018
+
+Symbol: search_in_pool
+   Definitions
+      At line 8 in file ASM_functions.s
+   Uses
+      At line 3 in file ASM_functions.s
+Comment: search_in_pool used once
+6 symbols
+342 symbols in table

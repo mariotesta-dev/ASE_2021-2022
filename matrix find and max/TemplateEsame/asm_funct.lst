@@ -1,0 +1,99 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000         
+    2 00000000                 AREA             asm_functions, CODE, READONLY
+    3 00000000                 EXPORT           find_and_max
+    4 00000000         
+    5 00000000         find_and_max
+    6 00000000 46EC            MOV              R12, sp
+    7 00000002 E92D 4DF0       STMFD            sp!, {r4-r8, r10-r11, lr}
+    8 00000006         
+    9 00000006         ;ro = MAT
+   10 00000006         ;r1 = x1
+   11 00000006         ;r2 = y1
+   12 00000006         ;r3 = x2
+   13 00000006         ;ldr r4, |r12|... ldr r5, |r12, #4|, ecc...
+   14 00000006         
+   15 00000006 F8DC 4000       ldr              r4, [r12]   ;y2
+   16 0000000A F8DC 5004       ldr              r5, [r12, #4] ;M
+   17 0000000E F8DC 6008       ldr              r6, [r12, #8] ;N
+   18 00000012         
+   19 00000012         ;X1, Y1
+   20 00000012         ;per riga moltiplico M*X1*4
+   21 00000012 F04F 0704       mov              r7, #4
+   22 00000016 FB06 F801       mul              r8, r6, r1  ;N*X1
+   23 0000001A FB08 F807       mul              r8, r8, r7  ; *4 byte
+   24 0000001E 4480            add              r8, r0, r8  ; mi sposto nella p
+                                                            osizione in r0
+   25 00000020         ;per colonna sommo Y1*4
+   26 00000020 FB02 F907       mul              r9, r2, r7  ;Y1*4
+   27 00000024 44C8            add              r8, r8, r9  ;sommo dove mi trov
+                                                            o nella posizione r
+                                                            0 + offset dato da 
+                                                            Y1
+   28 00000026 F8D8 A000       ldr              r10, [r8]
+   29 0000002A         
+   30 0000002A         ;X2, Y2
+   31 0000002A         ;per riga moltiplico M*X2*4
+   32 0000002A F04F 0704       mov              r7, #4
+   33 0000002E FB06 F803       mul              r8, r6, r3  ;N*X2
+   34 00000032 FB08 F807       mul              r8, r8, r7  ; *4 byte
+   35 00000036 4480            add              r8, r0, r8  ; mi sposto nella p
+                                                            osizione in r0
+   36 00000038         ;per colonna moltiplico Y2*4
+   37 00000038 FB04 F907       mul              r9, r4, r7  ;Y2*4
+   38 0000003C 44C8            add              r8, r8, r9  ;sommo dove mi trov
+                                                            o nella posizione r
+                                                            0 + offset dato da 
+                                                            Y1
+   39 0000003E F8D8 B000       ldr              r11, [r8]
+   40 00000042         
+   41 00000042 45DA            cmp              r10, r11
+   42 00000044 BFAC 4650       movge            r0, r10
+   43 00000048 4658            movlt            r0, r11
+   44 0000004A         
+   45 0000004A         ;restore volatile registers
+   46 0000004A E8BD 8DF0       LDMFD            sp!, {r4-r8, r10-r11, pc}
+   47 0000004E         
+   48 0000004E                 END                          ;
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
+ork --depend=.\asm_funct.d -o.\asm_funct.o -I.\RTE\_Target_1 -IC:\Users\mario\A
+ppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include -IC:\Users\mario\AppD
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+ata\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include --predefine="__EVAL S
+ETA 1" --predefine="__UVISION_VERSION SETA 536" --predefine="_RTE_ SETA 1" --pr
+edefine="LPC175x_6x SETA 1" --predefine="_RTE_ SETA 1" --list=.\asm_funct.lst R
+IT\ASM_funct.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+asm_functions 00000000
+
+Symbol: asm_functions
+   Definitions
+      At line 2 in file RIT\ASM_funct.s
+   Uses
+      None
+Comment: asm_functions unused
+find_and_max 00000000
+
+Symbol: find_and_max
+   Definitions
+      At line 5 in file RIT\ASM_funct.s
+   Uses
+      At line 3 in file RIT\ASM_funct.s
+Comment: find_and_max used once
+2 symbols
+336 symbols in table

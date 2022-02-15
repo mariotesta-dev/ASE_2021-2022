@@ -1,0 +1,61 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000         
+    2 00000000                 AREA             asm_functions, CODE, READONLY
+    3 00000000                 EXPORT           divisible
+    4 00000000         
+    5 00000000         divisible
+    6 00000000 46EC            MOV              R12, sp
+    7 00000002 E92D 4DF0       STMFD            sp!, {r4-r8, r10-r11, lr}
+    8 00000006         
+    9 00000006         ;ro = e1
+   10 00000006         ;r1 = e2
+   11 00000006         
+   12 00000006         ;divide e1/e2, if module==0 then the numbers are divisib
+                       le and return 0, else return module
+   13 00000006 FBB0 F4F1       UDIV             R4, R0, R1
+   14 0000000A FB04 F401       MUL              R4, R4, R1
+   15 0000000E EBA0 0504       SUB              R5, R0, R4
+   16 00000012         
+   17 00000012         ;setup value for R0 to return
+   18 00000012 4628            MOV              R0, R5
+   19 00000014         
+   20 00000014         ;restore volatile registers
+   21 00000014 E8BD 8DF0       LDMFD            sp!, {r4-r8, r10-r11, pc}
+   22 00000018         
+   23 00000018                 END                          ;
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
+ork --depend=.\asm_functions.d -o.\asm_functions.o -I.\RTE\_Target_1 -IC:\Users
+\mario\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include -IC:\Users\ma
+rio\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include --predefine="
+__EVAL SETA 1" --predefine="__UVISION_VERSION SETA 536" --predefine="_RTE_ SETA
+ 1" --predefine="LPC175x_6x SETA 1" --predefine="_RTE_ SETA 1" --list=.\asm_fun
+ctions.lst ASM_functions.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+asm_functions 00000000
+
+Symbol: asm_functions
+   Definitions
+      At line 2 in file ASM_functions.s
+   Uses
+      None
+Comment: asm_functions unused
+divisible 00000000
+
+Symbol: divisible
+   Definitions
+      At line 5 in file ASM_functions.s
+   Uses
+      At line 3 in file ASM_functions.s
+Comment: divisible used once
+2 symbols
+336 symbols in table

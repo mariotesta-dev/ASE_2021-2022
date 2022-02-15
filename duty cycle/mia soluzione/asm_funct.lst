@@ -1,0 +1,129 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000         
+    2 00000000                 AREA             asm_functions, CODE, READONLY
+    3 00000000                 EXPORT           duty_cycle
+    4 00000000         
+    5 00000000         duty_cycle
+    6 00000000 46EC            MOV              R12, sp
+    7 00000002 E92D 4DF0       STMFD            sp!, {r4-r8, r10-r11, lr}
+    8 00000006         
+    9 00000006         ;ro = valore_iniziale
+   10 00000006         ;r1 = tempo_totale
+   11 00000006         ;r2 = tempi_variazione array
+   12 00000006         ;r3 = numero_variazioni
+   13 00000006         
+   14 00000006 F04F 0504       mov              r5, #4
+   15 0000000A FB03 F505       mul              r5, r3, r5  ;numero di byte per
+                                                             calcolare indirizz
+                                                            o finale
+   16 0000000E EB02 0405       add              r4, r2, r5  ;indirizzo finale d
+                                                            el vettore tempi_va
+                                                            riazione
+   17 00000012 2800            cmp              r0, #0      ;se valore iniziale
+                                                             è 0
+   18 00000014 BF08 1D12       addeq            r2,r2,#4    ;inizia a leggere d
+                                                            alla posizione 1, p
+                                                            erchè è lì che si t
+                                                            rova la prima durat
+                                                            a del segnale a 1
+   19 00000018         ;else il valore iniziale è 1, quindi inizia a leggere da
+                       lla posizione 0
+   20 00000018 F04F 0500       mov              r5, #0
+   21 0000001C         loop
+   22 0000001C 42A2            cmp              r2,r4       ;sono alla fine del
+                                                             vettore? --> caso 
+                                                            num_variazioni = 0
+   23 0000001E DA05            bge              fine        ;se sono alla fine 
+                                                            o dopo, cioè il pun
+                                                            tatore supera la fi
+                                                            ne... esci
+   24 00000020         ;else... 
+   25 00000020 6816            ldr              r6, [r2]    ;prendo valore da t
+                                                            empi_variazioni
+   26 00000022 4435            add              r5, r5, r6  ;sommo la durata co
+                                                            n segnale a 1
+   27 00000024         
+   28 00000024 F102 0208       add              r2,r2,#8    ;mi sposto 2 posizi
+                                                            oni più avanti, per
+                                                             leggere la success
+                                                            iva durata del segn
+                                                            ale a 1, se esiste
+   29 00000028         
+   30 00000028 42A2            cmp              r2,r4       ;compare puntatore 
+                                                            tempi_variazione e 
+                                                            posizione finale
+   31 0000002A DBF7            blt              loop        ;se non sono arriva
+                                                            to alla fine del ve
+                                                            ttore, jump a loop
+   32 0000002C         
+   33 0000002C         fine
+   34 0000002C F04F 0764       mov              r7, #100
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+   35 00000030 FB05 F507       mul              r5,r5,r7    ;durata a 1 * 100
+   36 00000034 FBB5 F5F1       udiv             r5, r5, r1  ; --> durata a 1 * 
+                                                            100 / durata tot = 
+                                                            duty cycle
+   37 00000038         ;setup value for R0 to return
+   38 00000038 4628            MOV              R0, R5
+   39 0000003A         
+   40 0000003A         ;restore volatile registers
+   41 0000003A E8BD 8DF0       LDMFD            sp!, {r4-r8, r10-r11, pc}
+   42 0000003E         
+   43 0000003E                 END                          ;
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
+ork --depend=.\asm_funct.d -o.\asm_funct.o -I.\RTE\_Target_1 -IC:\Users\mario\A
+ppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include -IC:\Users\mario\AppD
+ata\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include --predefine="__EVAL S
+ETA 1" --predefine="__UVISION_VERSION SETA 536" --predefine="_RTE_ SETA 1" --pr
+edefine="LPC175x_6x SETA 1" --predefine="_RTE_ SETA 1" --list=.\asm_funct.lst R
+IT\ASM_funct.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+asm_functions 00000000
+
+Symbol: asm_functions
+   Definitions
+      At line 2 in file RIT\ASM_funct.s
+   Uses
+      None
+Comment: asm_functions unused
+duty_cycle 00000000
+
+Symbol: duty_cycle
+   Definitions
+      At line 5 in file RIT\ASM_funct.s
+   Uses
+      At line 3 in file RIT\ASM_funct.s
+Comment: duty_cycle used once
+fine 0000002C
+
+Symbol: fine
+   Definitions
+      At line 33 in file RIT\ASM_funct.s
+   Uses
+      At line 23 in file RIT\ASM_funct.s
+Comment: fine used once
+loop 0000001C
+
+Symbol: loop
+   Definitions
+      At line 21 in file RIT\ASM_funct.s
+   Uses
+      At line 31 in file RIT\ASM_funct.s
+Comment: loop used once
+4 symbols
+338 symbols in table
